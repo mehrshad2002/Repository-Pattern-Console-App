@@ -40,7 +40,7 @@ namespace RepoPatternApp
                     io.Print("Enter Int Without String.");
                 }
             }
-        }
+        } 
 
         private static void CallCommand(int command)
         {
