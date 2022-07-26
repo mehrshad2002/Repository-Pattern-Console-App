@@ -10,8 +10,7 @@ namespace Repo
     public interface IUser
     {
         // We Have All Command --> CRUD 
-        bool DeleteUser(User user);
-        bool UpdateUser(User user);
+        bool UpdateUser(User user , int oldID);
         bool CreateUser(User user);
         bool DeleteByID(int id);
         List<User> GetUsers();
