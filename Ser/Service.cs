@@ -1,11 +1,30 @@
 ﻿using Entity;
 using Repo;
 
-namespace Ser
+namespace Services
 {
-    public class Service
+
+    public interface IService
     {
-        public Repository.HomeUsers HU = new Repository.HomeUsers();
+        bool CreateUser(User user);
+
+        List<User> ReadAllUsers();
+
+        bool DeleteUser(int ID);
+
+        User ReadUser(int iD);
+
+        bool UpdateUser(User newUser, int oldID);
+    }
+    public class Service : IService
+    {
+
+        public Service(IUser user)
+        {
+            HU = user;
+        }
+
+        public IUser HU; //= new Repository.HomeUsers();
 
         public bool CreateUser(User user)
         {

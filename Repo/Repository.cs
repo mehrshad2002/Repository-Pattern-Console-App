@@ -8,139 +8,143 @@ namespace Repo
 {
     public class Repository
     {
-        // Class Which we can implement IUsers and 
-        // Connection to data Base
-        public class HomeUsers : IUser
+        
+    }
+
+    // Class Which we can implement IUsers and 
+    // Connection to data Base
+    public class HomeUsers : IUser
+    {
+        private string cs = @"Data Source=DESKTOP-6E77HUQ;Initial Catalog=Rip;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        public bool CreateUser(User user)
         {
-            private string cs = @"Data Source=DESKTOP-6E77HUQ;Initial Catalog=Rip;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            public bool CreateUser(User user)
+            using (SqlConnection con = new SqlConnection(cs))
             {
-                using(SqlConnection con = new SqlConnection(cs))
+                string queryCreate = "insert into Humen " +
+                    $"Values('{user.Name}','{user.Password}')";
+                SqlCommand cmd = new SqlCommand(queryCreate, con);
+                con.Open();
+                try
                 {
-                    string queryCreate = "insert into Humen " +
-                        $"Values('{user.Name}','{user.Password}')";
-                    SqlCommand cmd = new SqlCommand(queryCreate, con);
-                    con.Open();
-                    try
+                    int Result = cmd.ExecuteNonQuery();
+                    if (Result != 0)
                     {
-                        int Result = cmd.ExecuteNonQuery();
-                        if(Result != 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }catch(Exception e)
+                        return true;
+                    }
+                    else
                     {
                         return false;
                     }
                 }
-            }
-
-            public bool DeleteByID(int id)
-            {
-                using(SqlConnection con = new SqlConnection(cs))
+                catch (Exception e)
                 {
-                    string queryDelete = "delete from Humen " +
-                        $"where ID = {id}";
-                    SqlCommand cmd = new SqlCommand(queryDelete, con);
-                    con.Open();
+                    return false;
+                }
+            }
+        }
 
-                    int i = 0;
-                    try
+        public bool DeleteByID(int id)
+        {
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string queryDelete = "delete from Humen " +
+                    $"where ID = {id}";
+                SqlCommand cmd = new SqlCommand(queryDelete, con);
+                con.Open();
+
+                int i = 0;
+                try
+                {
+                    int Result = cmd.ExecuteNonQuery();
+                    if (Result != 0)
                     {
-                        int Result = cmd.ExecuteNonQuery();
-                        if (Result != 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                    catch (Exception e)
+                    else
                     {
                         return false;
                     }
                 }
-            }
-
-            public User GetById(int id)
-            {
-                User user = new User();
-                using(SqlConnection con = new SqlConnection(cs))
+                catch (Exception e)
                 {
-                    string queryReadUser = "select * from Humen " +
-                        $"where ID = {id}";
-                    SqlCommand cmd = new SqlCommand(queryReadUser , con );
-                    con.Open();
-                    SqlDataReader rdr = cmd.ExecuteReader();
-
-                    while(rdr.Read()){
-                        user.Id = rdr.GetInt32("id");
-                        user.Name = Convert.ToString(rdr["Name"]);
-                        user.Password = Convert.ToString(rdr["Password"]);
-                    }
-
-                    return user;
+                    return false;
                 }
             }
+        }
 
-            public List<User> GetUsers()
+        public User GetById(int id)
+        {
+            User user = new User();
+            using (SqlConnection con = new SqlConnection(cs))
             {
-                List<User> users = new List<User>();
-                using(SqlConnection con = new SqlConnection(cs))
+                string queryReadUser = "select * from Humen " +
+                    $"where ID = {id}";
+                SqlCommand cmd = new SqlCommand(queryReadUser, con);
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
                 {
-                    string queryReadUsers = "select * from Humen";
-                    SqlCommand cmd = new SqlCommand(queryReadUsers , con );
-                    con.Open();
-                    SqlDataReader rdr = cmd.ExecuteReader();
-
-                    while (rdr.Read())
-                    {
-                        User user = new User();
-                        user.Id = rdr.GetInt32("id");
-                        user.Name = Convert.ToString(rdr["Name"]);
-                        user.Password = Convert.ToString(rdr["Password"]);
-
-                        users.Add(user);
-                    }
-
-                    return users;
+                    user.Id = rdr.GetInt32("id");
+                    user.Name = Convert.ToString(rdr["Name"]);
+                    user.Password = Convert.ToString(rdr["Password"]);
                 }
+
+                return user;
             }
+        }
 
-            public bool UpdateUser(User user , int oldID)
+        public List<User> GetUsers()
+        {
+            List<User> users = new List<User>();
+            using (SqlConnection con = new SqlConnection(cs))
             {
-                User OldUser = new User();
-                using(SqlConnection con = new SqlConnection(cs))
+                string queryReadUsers = "select * from Humen";
+                SqlCommand cmd = new SqlCommand(queryReadUsers, con);
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
                 {
-                    string queryUpdate = "update Humen " +
-                        $"set Name = '{user.Name}' , Password = '{user.Password}'" +
-                        $"where ID = {oldID}";
+                    User user = new User();
+                    user.Id = rdr.GetInt32("id");
+                    user.Name = Convert.ToString(rdr["Name"]);
+                    user.Password = Convert.ToString(rdr["Password"]);
 
-                    SqlCommand cmd = new SqlCommand(queryUpdate , con );
-                    con.Open();
+                    users.Add(user);
+                }
 
-                    try
+                return users;
+            }
+        }
+
+        public bool UpdateUser(User user, int oldID)
+        {
+            User OldUser = new User();
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string queryUpdate = "update Humen " +
+                    $"set Name = '{user.Name}' , Password = '{user.Password}'" +
+                    $"where ID = {oldID}";
+
+                SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                con.Open();
+
+                try
+                {
+                    int Result = cmd.ExecuteNonQuery();
+                    if (Result != 0)
                     {
-                        int Result = cmd.ExecuteNonQuery();
-                        if (Result != 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                    catch (Exception e)
+                    else
                     {
                         return false;
                     }
+                }
+                catch (Exception e)
+                {
+                    return false;
                 }
             }
         }

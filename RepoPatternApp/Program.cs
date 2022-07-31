@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OI;
-using Ser;
+using Services;
 using Entity;
+using Repo;
 
 namespace RepoPatternApp
 {
     public class MainApp
     {
         public static IO io = new IO();
-        public static Service service = new Service();
+        public static IService service = new Service( new HomeUsers() );
         public static void Main()
         {
             while (true)
